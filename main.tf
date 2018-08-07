@@ -55,7 +55,7 @@ resource "aws_instance" "instance" {
 
   user_data = "${var.user_data}"
 
-  lifecyle {
+  lifecycle {
     ignore_changes = ["user_data"]
   }
 }
