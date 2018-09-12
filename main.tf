@@ -30,9 +30,20 @@
 
 provider "aws" {}
 
+module "dcos-tested-oses" {
+  source  = "dcos-terraform/tested-oses/aws"
+  version = "~> 0.0"
+
+  providers = {
+    aws = "aws"
+  }
+
+  os = "${var.dcos_instance_os}"
+}
+
 resource "aws_instance" "instance" {
   instance_type = "${var.instance_type}"
-  ami           = "${var.ami}"
+  ami           = "${coalesce(var.ami, module.dcos-tested-oses.aws_ami)}"
 
   count                       = "${var.num}"
   key_name                    = "${var.key_name}"
@@ -58,4 +69,29 @@ resource "aws_instance" "instance" {
   lifecycle {
     ignore_changes = ["user_data"]
   }
+}
+
+resource "null_resource" "instance-prereq" {
+  // if the user supplies an AMI or user_data we expect the prerequisites are met.
+  count = "${coalesce(var.ami, var.user_data) == "" ? var.num : 0}"
+
+  connection {
+    host = "${var.associate_public_ip_address ? element(aws_instance.instance.*.public_ip, count.index) : element(aws_instance.instance.*.private_ip, count.index)}"
+    user = "${module.dcos-tested-oses.user}"
+  }
+
+  provisioner "file" {
+    content = "${module.dcos-tested-oses.os-setup}"
+
+    destination = "/tmp/dcos-prereqs.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/dcos-prereqs.sh",
+      "sudo bash -x /tmp/dcos-prereqs.sh",
+    ]
+  }
+
+  depends_on = ["aws_instance.instance"]
 }

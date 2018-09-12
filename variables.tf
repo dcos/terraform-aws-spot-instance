@@ -66,6 +66,11 @@ variable "user_data" {
   default     = ""
 }
 
+variable "dcos_instance_os" {
+  description = "Operating system to use. Instead of using your own AMI you could use a provided OS."
+  default     = "centos_7.4"
+}
+
 // TODO: Maybe use a list instead and provision keys through cloudinit
 variable "key_name" {
   description = "The SSH key to use for these instances."
