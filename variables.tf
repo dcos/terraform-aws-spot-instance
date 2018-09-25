@@ -1,10 +1,10 @@
 variable "region" {
-  description = "Specify the region to be used"
+  description = "region"
   default     = ""
 }
 
 variable "cluster_name" {
-  description = "Specify the cluster name all resources get named and tagged with"
+  description = "Name of the DC/OS cluster"
 }
 
 # variable "availability_zones" {
@@ -13,13 +13,13 @@ variable "cluster_name" {
 # }
 
 variable "tags" {
-  description = "Add special tags to the resources created by this module"
+  description = "Add custom tags to all resources"
   type        = "map"
   default     = {}
 }
 
 variable "ami" {
-  description = "Specify the AMI to be used."
+  description = "AMI that will be used for the instance"
 }
 
 variable "num" {
@@ -27,7 +27,7 @@ variable "num" {
 }
 
 variable "instance_type" {
-  description = "Specify the instance type"
+  description = "instance type"
   default     = "m4.large"
 }
 
@@ -42,7 +42,7 @@ variable "root_volume_type" {
 }
 
 variable "subnet_ids" {
-  description = "Subnets to spawn the instances in. The module tries to distribute the instances"
+  description = "List of subnet IDs created in this network"
   type        = "list"
 }
 
@@ -57,12 +57,12 @@ variable "iam_instance_profile" {
 }
 
 variable "associate_public_ip_address" {
-  description = "The instance profile to be used for these instances"
+  description = "Associate a public IP address with the instances"
   default     = true
 }
 
 variable "user_data" {
-  description = "The user data to be used on these instances. E.g. cloud init"
+  description = "User data to be used on these instances (cloud-init)"
   default     = ""
 }
 

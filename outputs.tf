@@ -1,5 +1,5 @@
 output "instances" {
-  description = "List of instances IDs created by this module"
+  description = "List of instance IDs"
   value       = ["${aws_instance.instance.*.id}"]
 }
 
@@ -14,7 +14,7 @@ output "private_ips" {
 }
 
 output "os_user" {
-  description = "Output the OS user if default AMI is used"
+  description = "The OS user to be used"
   value       = "${module.dcos-tested-oses.user}"
 }
 
