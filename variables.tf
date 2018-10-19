@@ -27,7 +27,7 @@ variable "num" {
 }
 
 variable "instance_type" {
-  description = "instance type"
+  description = "Instance Type"
   default     = "m4.large"
 }
 

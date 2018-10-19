@@ -37,7 +37,7 @@ module "dcos-master-instance" {
 | dcos_instance_os | Operating system to use. Instead of using your own AMI you could use a provided OS. | string | `centos_7.4` | no |
 | hostname_format | Format the hostname inputs are index+1, region, cluster_name | string | `%[3]s-instance%[1]d-%[2]s` | no |
 | iam_instance_profile | The instance profile to be used for these instances | string | `` | no |
-| instance_type | instance type | string | `m4.large` | no |
+| instance_type | Instance Type | string | `m4.large` | no |
 | key_name | The SSH key to use for these instances. | string | - | yes |
 | num | How many instances should be created | string | - | yes |
 | region | region | string | `` | no |
