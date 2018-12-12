@@ -17,7 +17,7 @@
  *```hcl
  * module "dcos-master-instance" {
  *   source  = "terraform-dcos/instance/aws"
- *   version = "~> 0.1"
+ *   version = "~> 0.1.0"
  *
  *   cluster_name = "production"
  *   subnet_ids = ["subnet-12345678"]
@@ -32,7 +32,7 @@ provider "aws" {}
 
 module "dcos-tested-oses" {
   source  = "dcos-terraform/tested-oses/aws"
-  version = "~> 0.1"
+  version = "~> 0.1.0"
 
   providers = {
     aws = "aws"
