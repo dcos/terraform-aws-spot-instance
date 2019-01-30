@@ -74,7 +74,7 @@ resource "aws_instance" "instance" {
 resource "null_resource" "instance-prereq" {
   # Changes to any instance of the cluster requires re-provisioning
   triggers {
-    current_ec2_instance_id = "${element(aws_instance.instance.*.id, count.index)}"
+    current_instance_id = "${element(aws_instance.instance.*.id, count.index)}"
   }
 
   // if the user supplies an AMI or user_data we expect the prerequisites are met.
