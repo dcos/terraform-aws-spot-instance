@@ -39,6 +39,7 @@ module "dcos-master-instance" {
 | iam_instance_profile | The instance profile to be used for these instances | string | `` | no |
 | instance_type | Instance Type | string | `m4.large` | no |
 | key_name | The SSH key to use for these instances. | string | - | yes |
+| name_prefix | Name Prefix | string | `` | no |
 | num | How many instances should be created | string | - | yes |
 | region | region | string | `` | no |
 | root_volume_size | Specify the root volume size | string | `40` | no |
