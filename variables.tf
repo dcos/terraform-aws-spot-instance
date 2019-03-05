@@ -86,6 +86,11 @@ variable "hostname_format" {
   default     = "%[3]s-instance%[1]d-%[2]s"
 }
 
+variable "name_prefix" {
+  description = "Name Prefix"
+  default     = ""
+}
+
 variable "extra_volume_name_format" {
   description = "Printf style format for naming the extra volumes. Inputs are cluster_name and instance ID."
   default     = "extra-volumes-%s-%s"

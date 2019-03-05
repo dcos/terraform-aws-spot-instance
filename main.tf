@@ -45,7 +45,10 @@
 
 provider "aws" {}
 
+// If name_prefix exists, merge it into the cluster_name
 locals {
+  cluster_name = "${var.name_prefix != "" ? "${var.name_prefix}-${var.cluster_name}" : var.cluster_name}"
+
   # NOTE: This is to workaround the divide by zero warning from Terraform.
   num_extra_volumes = "${length(var.extra_volumes) > 0 ? length(var.extra_volumes) : 1}"
 
@@ -79,7 +82,7 @@ resource "aws_instance" "instance" {
   # availability_zone = "${element(var.availability_zones, count.index % length(var.availability_zones)}"
   subnet_id = "${element(var.subnet_ids, count.index % length(var.subnet_ids))}"
 
-  tags = "${merge(var.tags, map("Name", format(var.hostname_format, (count.index + 1), var.region, var.cluster_name),
+  tags = "${merge(var.tags, map("Name", format(var.hostname_format, (count.index + 1), var.region, local.cluster_name),
                                 "Cluster", var.cluster_name,
                                 "KubernetesCluster", var.cluster_name))}"
 
