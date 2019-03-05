@@ -24,6 +24,21 @@
  *   security_group_ids = ["sg-12345678"]
  *   hostname_format = "%[3]s-master%[1]d-%[2]s"
  *   ami = "ami-12345678"
+ *
+ *   extra_volumes = [
+ *     {
+ *       size        = "100"
+ *       type        = "gp2"
+ *       iops        = "3000"
+ *       device_name = "/dev/xvdi"
+ *     },
+ *     {
+ *       size        = "1000"
+ *       type        = ""     # Use AWS default.
+ *       iops        = "0"    # Use AWS default.
+ *       device_name = "/dev/xvdj"
+ *     }
+ *   ]
  * }
  *```
  */
@@ -33,6 +48,14 @@ provider "aws" {}
 // If name_prefix exists, merge it into the cluster_name
 locals {
   cluster_name = "${var.name_prefix != "" ? "${var.name_prefix}-${var.cluster_name}" : var.cluster_name}"
+
+  # NOTE: This is to workaround the divide by zero warning from Terraform.
+  num_extra_volumes = "${length(var.extra_volumes) > 0 ? length(var.extra_volumes) : 1}"
+
+  # NOTE: This is to make "lookup" happy. Otherwise, it will complain
+  # about the type cannot be derived if "var.extra_volumes" is not
+  # set.
+  extra_volumes = "${concat(var.extra_volumes, list(map("dummy", "dummy")))}"
 }
 
 module "dcos-tested-oses" {
@@ -74,6 +97,40 @@ resource "aws_instance" "instance" {
   lifecycle {
     ignore_changes = ["user_data", "ami"]
   }
+}
+
+resource "aws_ebs_volume" "volume" {
+  # We group volumes from one instance first. For instance:
+  # - length(var.extra_volumes) = 2 (volumes)
+  # - var.num = 3 (instances)
+  #
+  # We will get:
+  # - volume.0 (instance 0)
+  # - volume.1 (instance 0)
+  # - volume.2 (instance 1)
+  # - volume.3 (instance 1)
+  # - volume.4 (instance 2)
+  # - volume.5 (instance 2)
+  count = "${var.num * length(var.extra_volumes)}"
+
+  availability_zone = "${element(aws_instance.instance.*.availability_zone, count.index / local.num_extra_volumes)}"
+  size              = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "size", "120")}"
+  type              = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "type", "")}"
+  iops              = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "iops", "0")}"
+
+  tags = "${merge(var.tags, map(
+                "Name", format(var.extra_volume_name_format,
+                               var.cluster_name,
+                               element(aws_instance.instance.*.id, count.index / local.num_extra_volumes)),
+                "Cluster", var.cluster_name))}"
+}
+
+resource "aws_volume_attachment" "volume-attachment" {
+  count        = "${var.num * length(var.extra_volumes)}"
+  device_name  = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "device_name", "dummy")}"
+  volume_id    = "${element(aws_ebs_volume.volume.*.id, count.index)}"
+  instance_id  = "${element(aws_instance.instance.*.id, count.index / local.num_extra_volumes)}"
+  force_detach = true
 }
 
 resource "null_resource" "instance-prereq" {

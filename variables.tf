@@ -41,6 +41,11 @@ variable "root_volume_type" {
   default     = "gp2"
 }
 
+variable "extra_volumes" {
+  description = "Extra volumes for each instance"
+  default     = []
+}
+
 variable "subnet_ids" {
   description = "List of subnet IDs created in this network"
   type        = "list"
@@ -84,4 +89,9 @@ variable "hostname_format" {
 variable "name_prefix" {
   description = "Name Prefix"
   default     = ""
+}
+
+variable "extra_volume_name_format" {
+  description = "Printf style format for naming the extra volumes. Inputs are cluster_name and instance ID."
+  default     = "extra-volumes-%s-%s"
 }

@@ -23,6 +23,21 @@ module "dcos-master-instance" {
   security_group_ids = ["sg-12345678"]
   hostname_format = "%[3]s-master%[1]d-%[2]s"
   ami = "ami-12345678"
+
+  extra_volumes = [
+    {
+      size        = "100"
+      type        = "gp2"
+      iops        = "3000"
+      device_name = "/dev/xvdi"
+    },
+    {
+      size        = "1000"
+      type        = ""     # Use AWS default.
+      iops        = "0"    # Use AWS default.
+      device_name = "/dev/xvdj"
+    }
+  ]
 }
 ```
 
@@ -35,6 +50,8 @@ module "dcos-master-instance" {
 | associate_public_ip_address | Associate a public IP address with the instances | string | `true` | no |
 | cluster_name | Name of the DC/OS cluster | string | - | yes |
 | dcos_instance_os | Operating system to use. Instead of using your own AMI you could use a provided OS. | string | `centos_7.4` | no |
+| extra_volume_name_format | Printf style format for naming the extra volumes. Inputs are cluster_name and instance ID. | string | `extra-volumes-%s-%s` | no |
+| extra_volumes | Extra volumes for each instance | string | `<list>` | no |
 | hostname_format | Format the hostname inputs are index+1, region, cluster_name | string | `%[3]s-instance%[1]d-%[2]s` | no |
 | iam_instance_profile | The instance profile to be used for these instances | string | `` | no |
 | instance_type | Instance Type | string | `m4.large` | no |
