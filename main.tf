@@ -129,28 +129,3 @@ resource "aws_volume_attachment" "volume-attachment" {
   instance_id  = "${element(aws_instance.instance.*.id, count.index / local.num_extra_volumes)}"
   force_detach = true
 }
-
-resource "null_resource" "instance-prereq" {
-  // if the user supplies an AMI or user_data we expect the prerequisites are met.
-  count = "${coalesce(var.ami, var.user_data) == "" ? var.num : 0}"
-
-  connection {
-    host = "${var.associate_public_ip_address ? element(aws_instance.instance.*.public_ip, count.index) : element(aws_instance.instance.*.private_ip, count.index)}"
-    user = "${module.dcos-tested-oses.user}"
-  }
-
-  provisioner "file" {
-    content = "${module.dcos-tested-oses.os-setup}"
-
-    destination = "/tmp/dcos-prereqs.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/dcos-prereqs.sh",
-      "sudo bash -x /tmp/dcos-prereqs.sh",
-    ]
-  }
-
-  depends_on = ["aws_instance.instance"]
-}
