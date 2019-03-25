@@ -69,7 +69,7 @@ module "dcos-tested-oses" {
   os = "${var.dcos_instance_os}"
 }
 
-resource "aws_instance" "instance" {
+resource "aws_spot_instance_request" "instance" {
   instance_type = "${var.instance_type}"
   ami           = "${coalesce(var.ami, module.dcos-tested-oses.aws_ami)}"
 
@@ -91,6 +91,11 @@ resource "aws_instance" "instance" {
     volume_type           = "${var.root_volume_type}"
     delete_on_termination = true
   }
+
+  //spot stuff
+  block_duration_minutes = 60
+  wait_for_fulfillment   = true
+  spot_type              = "one-time"
 
   user_data = "${var.user_data}"
 
