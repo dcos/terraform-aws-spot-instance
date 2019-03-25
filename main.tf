@@ -66,7 +66,7 @@ module "dcos-tested-oses" {
   os = "${var.dcos_instance_os}"
 }
 
-resource "aws_instance" "instance" {
+resource "aws_spot_instance_request" "instance" {
   instance_type = "${var.instance_type}"
   ami           = "${coalesce(var.ami, module.dcos-tested-oses.aws_ami)}"
 
@@ -88,6 +88,11 @@ resource "aws_instance" "instance" {
     volume_type           = "${var.root_volume_type}"
     delete_on_termination = true
   }
+
+  //spot stuff
+  block_duration_minutes = 60
+  wait_for_fulfillment   = true
+  spot_type              = "one-time"
 
   user_data = "${var.user_data}"
 
@@ -135,7 +140,7 @@ resource "null_resource" "instance-prereq" {
   count = "${coalesce(var.ami, var.user_data) == "" ? var.num : 0}"
 
   connection {
-    host = "${var.associate_public_ip_address ? element(aws_instance.instance.*.public_ip, count.index) : element(aws_instance.instance.*.private_ip, count.index)}"
+    host = "${var.associate_public_ip_address ? element(aws_spot_instance_request.instance.*.public_ip, count.index) : element(aws_spot_instance_request.instance.*.private_ip, count.index)}"
     user = "${module.dcos-tested-oses.user}"
   }
 
@@ -152,5 +157,5 @@ resource "null_resource" "instance-prereq" {
     ]
   }
 
-  depends_on = ["aws_instance.instance"]
+  depends_on = ["aws_spot_instance_request.instance"]
 }
