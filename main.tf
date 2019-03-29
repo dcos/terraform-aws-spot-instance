@@ -90,7 +90,7 @@ resource "aws_spot_instance_request" "instance" {
   }
 
   //spot stuff
-  block_duration_minutes = 60
+  block_duration_minutes = 120
   wait_for_fulfillment   = true
   spot_type              = "one-time"
   user_data = "${var.user_data}"
