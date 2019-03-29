@@ -93,7 +93,6 @@ resource "aws_spot_instance_request" "instance" {
   block_duration_minutes = 60
   wait_for_fulfillment   = true
   spot_type              = "one-time"
-
   user_data = "${var.user_data}"
 
   lifecycle {
@@ -115,7 +114,7 @@ resource "aws_ebs_volume" "volume" {
   # - volume.5 (instance 2)
   count = "${var.num * length(var.extra_volumes)}"
 
-  availability_zone = "${element(aws_instance.instance.*.availability_zone, count.index / local.num_extra_volumes)}"
+  availability_zone = "${element(aws_spot_instance_request.instance.*.availability_zone, count.index / local.num_extra_volumes)}"
   size              = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "size", "120")}"
   type              = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "type", "")}"
   iops              = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "iops", "0")}"
@@ -123,15 +122,15 @@ resource "aws_ebs_volume" "volume" {
   tags = "${merge(var.tags, map(
                 "Name", format(var.extra_volume_name_format,
                                var.cluster_name,
-                               element(aws_instance.instance.*.id, count.index / local.num_extra_volumes)),
+                               element(aws_spot_instance_request.instance.*.spot_instance_id, count.index / local.num_extra_volumes)),
                 "Cluster", var.cluster_name))}"
 }
 
 resource "aws_volume_attachment" "volume-attachment" {
   count        = "${var.num * length(var.extra_volumes)}"
   device_name  = "${lookup(local.extra_volumes[count.index % local.num_extra_volumes], "device_name", "dummy")}"
-  volume_id    = "${element(aws_ebs_volume.volume.*.id, count.index)}"
-  instance_id  = "${element(aws_instance.instance.*.id, count.index / local.num_extra_volumes)}"
+  volume_id    = "${element(aws_ebs_volume.volume.*.spot_instance_id, count.index)}"
+  instance_id  = "${element(aws_spot_instance_request.instance.*.spot_instance_id, count.index / local.num_extra_volumes)}"
   force_detach = true
 }
 
