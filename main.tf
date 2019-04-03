@@ -141,6 +141,7 @@ resource "null_resource" "instance-prereq" {
   connection {
     host = "${var.associate_public_ip_address ? element(aws_spot_instance_request.instance.*.public_ip, count.index) : element(aws_spot_instance_request.instance.*.private_ip, count.index)}"
     user = "${module.dcos-tested-oses.user}"
+    timeout = "10m"
   }
 
   provisioner "file" {
