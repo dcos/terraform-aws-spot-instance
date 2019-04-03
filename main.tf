@@ -94,6 +94,7 @@ resource "aws_spot_instance_request" "instance" {
   wait_for_fulfillment   = true
   spot_type              = "one-time"
   user_data = "${var.user_data}"
+  wait_for_ready_timeout = "10m"
 
   timeouts {
     create = "20m"
