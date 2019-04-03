@@ -95,6 +95,10 @@ resource "aws_spot_instance_request" "instance" {
   spot_type              = "one-time"
   user_data = "${var.user_data}"
 
+  timeouts {
+    create = "20m"
+  }
+
   lifecycle {
     ignore_changes = ["user_data", "ami"]
   }
