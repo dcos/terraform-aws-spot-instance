@@ -16,7 +16,7 @@ EXAMPLE
 ```hcl
 module "dcos-master-instance" {
   source  = "terraform-dcos/instance/aws"
-  version = "~> 0.1.0"
+  version = "~> 0.2.0"
 
   cluster_name = "production"
   subnet_ids = ["subnet-12345678"]
@@ -41,38 +41,37 @@ module "dcos-master-instance" {
 }
 ```
 
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| ami | AMI that will be used for the instance | string | - | yes |
-| associate_public_ip_address | Associate a public IP address with the instances | string | `true` | no |
-| cluster_name | Name of the DC/OS cluster | string | - | yes |
-| dcos_instance_os | Operating system to use. Instead of using your own AMI you could use a provided OS. | string | `centos_7.4` | no |
-| extra_volume_name_format | Printf style format for naming the extra volumes. Inputs are cluster_name and instance ID. | string | `extra-volumes-%s-%s` | no |
-| extra_volumes | Extra volumes for each instance | string | `<list>` | no |
-| hostname_format | Format the hostname inputs are index+1, region, cluster_name | string | `%[3]s-instance%[1]d-%[2]s` | no |
-| iam_instance_profile | The instance profile to be used for these instances | string | `` | no |
-| instance_type | Instance Type | string | `m4.large` | no |
-| key_name | The SSH key to use for these instances. | string | - | yes |
-| name_prefix | Name Prefix | string | `` | no |
-| num | How many instances should be created | string | - | yes |
-| region | region | string | `` | no |
-| root_volume_size | Specify the root volume size | string | `40` | no |
-| root_volume_type | Specify the root volume type. Masters MUST have at least gp2 | string | `gp2` | no |
-| security_group_ids | Firewall IDs to use for these instances | list | - | yes |
-| subnet_ids | List of subnet IDs created in this network | list | - | yes |
+| ami | AMI that will be used for the instance | string | n/a | yes |
+| associate\_public\_ip\_address | Associate a public IP address with the instances | string | `"true"` | no |
+| cluster\_name | Name of the DC/OS cluster | string | n/a | yes |
+| dcos\_instance\_os | Operating system to use. Instead of using your own AMI you could use a provided OS. | string | `"centos_7.4"` | no |
+| extra\_volume\_name\_format | Printf style format for naming the extra volumes. Inputs are cluster_name and instance ID. | string | `"extra-volumes-%s-%s"` | no |
+| extra\_volumes | Extra volumes for each instance | list | `<list>` | no |
+| hostname\_format | Format the hostname inputs are index+1, region, cluster_name | string | `"%[3]s-instance%[1]d-%[2]s"` | no |
+| iam\_instance\_profile | The instance profile to be used for these instances | string | `""` | no |
+| instance\_type | Instance Type | string | `"m4.large"` | no |
+| key\_name | The SSH key to use for these instances. | string | n/a | yes |
+| name\_prefix | Name Prefix | string | `""` | no |
+| num | How many instances should be created | string | n/a | yes |
+| region | region | string | `""` | no |
+| root\_volume\_size | Specify the root volume size | string | `"40"` | no |
+| root\_volume\_type | Specify the root volume type. Masters MUST have at least gp2 | string | `"gp2"` | no |
+| security\_group\_ids | Firewall IDs to use for these instances | list | n/a | yes |
+| subnet\_ids | List of subnet IDs created in this network | list | n/a | yes |
 | tags | Add custom tags to all resources | map | `<map>` | no |
-| user_data | User data to be used on these instances (cloud-init) | string | `` | no |
+| user\_data | User data to be used on these instances (cloud-init) | string | `""` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | instances | List of instance IDs |
-| os_user | The OS user to be used |
+| os\_user | The OS user to be used |
 | prereq-id | Returns the ID of the prereq script (if user_data or ami are not used) |
-| private_ips | List of private ip addresses created by this module |
-| public_ips | List of public ip addresses created by this module |
+| private\_ips | List of private ip addresses created by this module |
+| public\_ips | List of public ip addresses created by this module |
 
