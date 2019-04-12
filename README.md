@@ -46,22 +46,22 @@ module "dcos-master-instance" {
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | ami | AMI that will be used for the instance | string | n/a | yes |
-| associate\_public\_ip\_address | Associate a public IP address with the instances | string | `"true"` | no |
 | cluster\_name | Name of the DC/OS cluster | string | n/a | yes |
+| key\_name | The SSH key to use for these instances. | string | n/a | yes |
+| num | How many instances should be created | string | n/a | yes |
+| security\_group\_ids | Firewall IDs to use for these instances | list | n/a | yes |
+| subnet\_ids | List of subnet IDs created in this network | list | n/a | yes |
+| associate\_public\_ip\_address | Associate a public IP address with the instances | string | `"true"` | no |
 | dcos\_instance\_os | Operating system to use. Instead of using your own AMI you could use a provided OS. | string | `"centos_7.4"` | no |
 | extra\_volume\_name\_format | Printf style format for naming the extra volumes. Inputs are cluster_name and instance ID. | string | `"extra-volumes-%s-%s"` | no |
 | extra\_volumes | Extra volumes for each instance | list | `<list>` | no |
 | hostname\_format | Format the hostname inputs are index+1, region, cluster_name | string | `"%[3]s-instance%[1]d-%[2]s"` | no |
 | iam\_instance\_profile | The instance profile to be used for these instances | string | `""` | no |
 | instance\_type | Instance Type | string | `"m4.large"` | no |
-| key\_name | The SSH key to use for these instances. | string | n/a | yes |
 | name\_prefix | Name Prefix | string | `""` | no |
-| num | How many instances should be created | string | n/a | yes |
 | region | region | string | `""` | no |
 | root\_volume\_size | Specify the root volume size | string | `"40"` | no |
 | root\_volume\_type | Specify the root volume type. Masters MUST have at least gp2 | string | `"gp2"` | no |
-| security\_group\_ids | Firewall IDs to use for these instances | list | n/a | yes |
-| subnet\_ids | List of subnet IDs created in this network | list | n/a | yes |
 | tags | Add custom tags to all resources | map | `<map>` | no |
 | user\_data | User data to be used on these instances (cloud-init) | string | `""` | no |
 
