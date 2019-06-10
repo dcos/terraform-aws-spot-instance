@@ -1,6 +1,6 @@
 output "instances" {
   description = "List of instance IDs"
-  value       = ["${aws_spot_instance_request.instance.*.id}"]
+  value       = ["${aws_spot_instance_request.instance.*.spot_instance_id}"]
 }
 
 output "public_ips" {
